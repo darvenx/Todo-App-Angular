@@ -1,0 +1,25 @@
+<div class="card">
+  <h2>{{ heading() }}</h2>
+
+  <ul>
+    @for (todo of todos; track todo.id) {
+      <li>
+        <span>{{ todo.title }}</span>
+
+        @if (todo.status) {
+          <span class="muted">Done</span>
+        } @else {
+          <span class="muted">Pending</span>
+        }
+
+        @switch (todo.priority) {
+          @case ('high')   { <span>High</span> }
+          @case ('normal') { <span>Normal</span> }
+          @default         { <span>Low</span> }
+        }
+      </li>
+    } @empty {
+      <li class="muted">No todos yet.</li>
+    }
+  </ul>
+</div>
