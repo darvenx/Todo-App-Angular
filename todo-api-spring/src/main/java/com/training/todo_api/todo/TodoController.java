@@ -1,12 +1,15 @@
 package com.training.todo_api.todo;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.http.MediaType;
 
+@Tag(name = "todos", description = "Todo CRUD operations")
 @RestController
 @RequestMapping("/api/todos")
 public class TodoController {
@@ -17,7 +20,8 @@ public class TodoController {
         this.repository = repository;
     }
 
-    @GetMapping
+    @Operation(summary = "Get all todos", operationId = "getAllTodos")
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Todo> getAll() {
         return repository.findAll();
     }
@@ -29,14 +33,16 @@ public class TodoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @Operation(summary = "Create todo", operationId = "createTodo")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Todo create(@Valid @RequestBody Todo todo) {
         todo.setStatus(false);
         return repository.save(todo);
     }
 
-    @PutMapping("/{id}")
+    @Operation(summary = "Update todo by id", operationId = "updateTodo")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Todo> update(@PathVariable Long id, @RequestBody Todo changes) {
         return repository.findById(id)
                 .map(existing -> {
@@ -48,6 +54,8 @@ public class TodoController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @Operation(summary = "Delete todo by id", operationId = "deleteTodo")
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
